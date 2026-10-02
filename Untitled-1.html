@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coin Factory</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0b1020;
+            color: white;
+        }
+
+        .app {
+            max-width: 430px;
+            min-height: 100vh;
+            margin: auto;
+            padding: 20px;
+            background: #11182d;
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .profile {
+            background: #202a45;
+            padding: 10px 14px;
+            border-radius: 20px;
+        }
+
+        .coin-card {
+            margin-top: 25px;
+            padding: 22px;
+            border-radius: 22px;
+            background: #1b2540;
+            text-align: center;
+        }
+
+        .coin-label {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .coins {
+            font-size: 42px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .energy-box {
+            margin-top: 18px;
+        }
+
+        .energy-text {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .energy-bar {
+            width: 100%;
+            height: 12px;
+            background: #29334f;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .energy-fill {
+            height: 100%;
+            width: 100%;
+            background: #00d084;
+            transition: width 0.2s;
+        }
+
+        .tap-area {
+            text-align: center;
+            margin-top: 35px;
+        }
+
+        .tap-button {
+            width: 190px;
+            height: 190px;
+            border-radius: 50%;
+            border: none;
+            font-size: 70px;
+            cursor: pointer;
+            background: #f5b942;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            transition: transform 0.1s;
+        }
+
+        .tap-button:active {
+            transform: scale(0.92);
+        }
+
+        .hint {
+            margin-top: 15px;
+            opacity: 0.6;
+        }
+
+        .menu {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 35px;
+        }
+
+        .menu-item {
+            padding: 16px 5px;
+            text-align: center;
+            background: #1b2540;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+
+        .menu-icon {
+            font-size: 25px;
+        }
+
+        .menu-text {
+            margin-top: 7px;
+            font-size: 12px;
+        }
+
+        .level {
+            margin-top: 20px;
+            padding: 15px;
+            background: #1b2540;
+            border-radius: 15px;
+        }
+
+        .level-title {
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <div class="top">
+        <div class="title">🪙 Coin Factory</div>
+        <div class="profile">👤 Player</div>
+    </div>
+
+    <div class="coin-card">
+        <div class="coin-label">YOUR COINS</div>
+        <div class="coins">🪙 <span id="coins">0</span></div>
+
+        <div class="energy-box">
+            <div class="energy-text">
+                <span>⚡ Energy</span>
+                <span><span id="energy">100</span>/100</span>
+            </div>
+
+            <div class="energy-bar">
+                <div class="energy-fill" id="energyFill"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tap-area">
+
+        <button class="tap-button" onclick="addCoin()">
+            🪙
+        </button>
+
+        <div class="hint">
+            TAP TO EARN
+        </div>
+
+    </div>
+
+    <div class="level">
+        <div class="level-title">
+            <span>⭐ Level 1</span>
+            <span id="progressText">0 / 100</span>
+        </div>
+    </div>
+
+    <div class="menu">
+
+        <div class="menu-item">
+            <div class="menu-icon">🎁</div>
+            <div class="menu-text">Daily</div>
+        </div>
+
+        <div class="menu-item">
+            <div class="menu-icon">🎯</div>
+            <div class="menu-text">Tasks</div>
+        </div>
+
+        <div class="menu-item">
+            <div class="menu-icon">👥</div>
+            <div class="menu-text">Friends</div>
+        </div>
+
+        <div class="menu-item">
+            <div class="menu-icon">🏆</div>
+            <div class="menu-text">Ranking</div>
+        </div>
+
+        <div class="menu-item">
+            <div class="menu-icon">⚡</div>
+            <div class="menu-text">Boost</div>
+        </div>
+
+        <div class="menu-item">
+            <div class="menu-icon">⚙️</div>
+            <div class="menu-text">Settings</div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    let coins = Number(localStorage.getItem("coins")) || 0;
+
+    let energy = Number(localStorage.getItem("energy"));
+
+    if (isNaN(energy)) {
+        energy = 100;
+    }
+
+    function updateUI() {
+
+        document.getElementById("coins").innerText = coins;
+
+        document.getElementById("energy").innerText = energy;
+
+        document.getElementById("energyFill").style.width =
+            energy + "%";
+
+        document.getElementById("progressText").innerText =
+            (coins % 100) + " / 100";
+    }
+
+    function addCoin() {
+
+        if (energy <= 0) {
+            alert("⚡ Energy संपली!");
+            return;
+        }
+
+        coins++;
+        energy--;
+
+        localStorage.setItem("coins", coins);
+        localStorage.setItem("energy", energy);
+
+        updateUI();
+    }
+
+    setInterval(function () {
+
+        if (energy < 100) {
+
+            energy++;
+
+            localStorage.setItem("energy", energy);
+
+            updateUI();
+        }
+
+    }, 5000);
+
+    updateUI();
+
+</script>
+
+</body>
+</html>
